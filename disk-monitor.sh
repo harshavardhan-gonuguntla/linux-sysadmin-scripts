@@ -1,4 +1,4 @@
-#!/bin/bash
+!/bin/bash
 # Description: Monitor disk usage and alert when a threshold is exceeded.
 # Author: Harshavardhan Gonuguntla
 

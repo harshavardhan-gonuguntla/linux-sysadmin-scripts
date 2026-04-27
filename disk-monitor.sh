@@ -1,12 +1,24 @@
 #!/bin/bash
-# Disk Usage Monitor
-# Sends alert if disk usage exceeds 90%
+# Description: Monitor disk usage and alert when a threshold is exceeded.
+# Author: Harshavardhan Gonuguntla
 
+# Configuration
 THRESHOLD=90
-USAGE=$(df / | grep / | awk '{print $5}' | sed 's/%//')
+MOUNT_POINT="/"
 
+# Get the current usage percentage (numeric only)
+USAGE=$(df "$MOUNT_POINT" --output=pcent | tail -1 | tr -dc '0-9')
+
+# Safety check: Ensure USAGE is a valid number
+if [[ ! "$USAGE" =~ ^[0-9]+$ ]]; then
+    echo "Error: Could not retrieve disk usage data." >&2
+    exit 1
+fi
+
+# Compare usage to threshold
 if [ "$USAGE" -gt "$THRESHOLD" ]; then
-    echo "ALERT: Disk usage is at ${USAGE}% - exceeds ${THRESHOLD}% threshold"
+    echo "ALERT: Disk usage on $MOUNT_POINT is at ${USAGE}% (Threshold: ${THRESHOLD}%)"
+    # Logic for email/alerts would go here in a production environment
 else
-    echo "OK: Disk usage is at ${USAGE}%"
+    echo "Disk usage is healthy: ${USAGE}%"
 fi
